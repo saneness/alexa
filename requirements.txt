@@ -1,0 +1,2 @@
+https://github.com/johnwheeler/flask-ask/archive/master.zip
+Flask==2.1.0
