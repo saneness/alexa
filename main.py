@@ -1,6 +1,7 @@
 import logging
 import os
 
+from config import *
 from flask import Flask
 from flask_ask import Ask, request, session, question, statement
 
@@ -8,31 +9,33 @@ app = Flask(__name__)
 ask = Ask(app, "/")
 logging.getLogger("flask_ask").setLevel(logging.DEBUG)
 
-PC_DEVICES = {
-    "pc"         : "your pc",
-    "computer"   : "your computer", 
-    "my pc"      : "your pc",
-    "my computer": "your computer"
-}
-
 @ask.launch
 def launch():
-    speech_text = "Welcome to Raspberry Pi Automation."
-    return question(speech_text).reprompt(speech_text).simple_card(speech_text)
+    reply = "Welcome to Raspberry Pi automation"
+    return reply
 
 @ask.intent("startDevice", mapping = {"device":"device"})
 def startDevice(device,room):
-    if device.lower() in PC_DEVICES:
-        os.system("/usr/local/bin/wol")
-        return statement(f"Turning {PC_DEVICES[device.lower()]} on.")
+    device = device.lower()
+    if device in DEVICES.pc.commands:
+        action = DEVICES.pc.action
+        reply = DEVICES.pc.reply
     else:
-        return statement(f"Sorry, I don't know what {device.lower()} is.")    
- 
+        action = None
+        reply = f"Sorry, I don't know what {device} is"
+    if action:
+        eval(action)
+    return statement(reply)
+
+@ask.intent("AMAZON.FallbackIntent")
+def help():
+    reply = "Something went wrong, please check server logs for more information"
+    return statement(reply)
+
 @ask.intent("AMAZON.HelpIntent")
 def help():
-    speech_text = "You can control Raspbery Pi with me!"
-    return question(speech_text).reprompt(speech_text).simple_card("Raspbery Pi", speech_text)
-
+    reply = "I can only ask Raspberry Pi to launch your computer, but I hope that we will be friends and I will be able to do much more using our interaction"
+    return statement(reply)
 
 @ask.session_ended
 def session_ended():
