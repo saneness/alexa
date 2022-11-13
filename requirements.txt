@@ -1,2 +1,3 @@
 https://github.com/johnwheeler/flask-ask/archive/master.zip
+gunicorn
 dotwiz
