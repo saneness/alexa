@@ -14,7 +14,7 @@ def launch():
     reply = "Welcome to Raspberry Pi automation"
     return reply
 
-@ask.intent("startDevice")
+@ask.intent("StartDeviceIntent")
 def startDevice(device):
     device = device.lower()
     if device in DEVICES.pc.commands:
